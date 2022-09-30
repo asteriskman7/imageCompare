@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>imageCompare</title>
+    <!-- <link rel="icon" href="favicon.png"> -->
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://unpkg.com/image-compare-viewer@1.5.0/dist/image-compare-viewer.min.css">
+  </head>
+  <body>
+    <div>
+      Instructions:
+      <ol>
+        <li>Paste image into textbox</li>
+        <li>Left click left anchor point</li>
+        <li>Right click equivalent point on right</li>
+        <li>Review result below</li>
+        <li>Manually tweak alignment as necessary or press optimize when everything is within 4 pixels of correct</li>
+      </ol>
+    </div>
+    <textarea id="pasteArea" placeholder="Paste Image Here"></textarea>
+    <img id="pastedImage" class='hidden'></img>
+    <div>
+      <canvas id='cmain' width='600' height='600' oncontextmenu='return false;'></canvas>
+    </div>
+    <div>
+      <button id='boptimize'>optimize</button> left <input id='il' type='number'> right <input id='ir' type='number'> y <input id='iy' type='number'>   
+    </div>
+    <div>
+      <canvas id='cresult'></canvas>
+    </div>
+    <div>
+      <canvas id='cscore' class='hidden'></canvas>
+    </div>
+    <div id='image-compare'>
+      <img id='imgl'>
+      <img id='imgr'>
+    </div>
+    <script src="https://unpkg.com/image-compare-viewer@1.5.0/dist/image-compare-viewer.min.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
