@@ -182,30 +182,24 @@ class App {
   mouseenterr() { this.mouseInR = true; }
   mouseleaver() { this.mouseInR = false; }
 
-  scoreOffset(left, right, y) {
-    const canvas = document.getElementById('cscore');
-    const ctx = canvas.getContext('2d');
-    canvas.width = this.canvas.width;
-    canvas.height = this.canvas.height;
-    ctx.drawImage(this.img, 0, 0);
-    
-    const imageData = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height).data;
-    
+  scoreOffset(imageData, left, right, y) {
 
     //compare pixels and return score for how much the overlap matches
+    const cwidth = this.canvas.width;
     const baseLeftx = 0;
     const baseRightx = baseLeftx + right - left;
-    const width = this.canvas.width - right + left;
+    const width = cwidth - right + left;
     const baseLefty = y < 0 ? 0 : y;
     const baseRighty = y < 0 ? -y : 0;
     const height = this.canvas.height - Math.abs(y);
 
     let totalDiff = 0;
-    const cwidth = this.canvas.width;
-    for (let dx = 0; dx < width; dx++) {
+    const maxStep = 32;
+    let checkedPixelCount = 0;
+    for (let dx = 0; dx < width; dx += 1 + Math.floor(Math.random() * maxStep)) {
       const xl = baseLeftx + dx;
       const xr = baseRightx + dx;
-      for (let dy = 0; dy < height; dy++) {
+      for (let dy = 0; dy < height; dy += 1 + Math.floor(Math.random() * maxStep)) {
         const yl = baseLefty + dy;
         const yr = baseRighty + dy;
         const il = (xl + yl * cwidth) * 4;
@@ -218,10 +212,10 @@ class App {
         const br = imageData[ir + 2];
         const diff = Math.abs(rl - rr) + Math.abs(gl - gr) + Math.abs(bl - br);
         totalDiff += diff;
+        checkedPixelCount++;
       }
     }
-    let pixelCount = width * height;
-    return {totalDiff, pixelCount, avg: totalDiff / pixelCount};
+    return totalDiff / checkedPixelCount;
 
   }
 
@@ -230,22 +224,29 @@ class App {
     let bestValue = Infinity;
     let bestPos;
     const left = this.pleft;
-    let oruns = 0;
-    for (let dr = -4; dr <= 4; dr++) {
+
+    const canvas = document.getElementById('cscore');
+    const ctx = canvas.getContext('2d');
+    canvas.width = this.canvas.width;
+    canvas.height = this.canvas.height;
+    ctx.drawImage(this.img, 0, 0);
+
+    const imageData = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height).data;
+    const range = 16;
+    for (let dr = -range; dr <= range; dr++) {
       const right = this.pright + dr;
-      for (let dy = -4; dy <= 4; dy++) {
-        oruns++;
+      for (let dy = -range; dy <= range; dy++) {
         const y = this.py + dy;
-        const score = this.scoreOffset(left, right, y);
+        const score = this.scoreOffset(imageData, left, right, y);
         let best = false;
-        if (score.avg < bestValue) {
+        if (score < bestValue) {
           best = true;
-          bestValue = score.avg;
+          bestValue = score;
           bestPos = {left, right, y};
         }
-        console.log(`${oruns}/81`, left, right, y, score, best ? 'BEST' : '    ');
       }
     }
+    console.log(bestValue);
 
     this.pright = bestPos.right;
     this.ir.value = bestPos.right;
