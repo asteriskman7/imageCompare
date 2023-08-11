@@ -9,15 +9,22 @@
     <link rel="stylesheet" href="https://unpkg.com/image-compare-viewer@1.5.0/dist/image-compare-viewer.min.css">
   </head>
   <body>
-    <div>
-      Instructions:
+    <div id='divInstr'>
+      Instructions (hover to view):
       <ol>
         <li>Paste image into textbox</li>
-        <li>Left click left anchor point</li>
-        <li>Right click equivalent point on right</li>
+        <li>Drag image on results to align images</li>
+        <li>Manually tweak alignment as necessary using left/right/y values or use optimize.</li>
         <li>Review result below</li>
-        <li>Manually tweak alignment as necessary or press optimize when everything is within 4 pixels of correct</li>
       </ol>
+      Alternate method for aligning images:
+      <ol>
+        <li>Left click left anchor point in source</li>
+        <li>Right click right anchor point in source</li>
+      </ol>
+      Optimize details: Range sets how far to look for better placements. It gets slow fast. 
+      Speed sets how many pixels to skip when checking for optimal placement. Multiple skip 
+      distances are actually used to avoid aliasing effects.
     </div>
     <textarea id="pasteArea" placeholder="Paste Image Here"></textarea>
     <img id="pastedImage" class='hidden'></img>
@@ -25,7 +32,10 @@
       <canvas id='cmain' width='600' height='600' oncontextmenu='return false;'></canvas>
     </div>
     <div>
-      <button id='boptimize'>optimize</button> left <input id='il' type='number'> right <input id='ir' type='number'> y <input id='iy' type='number'>   
+      <button id='boptimize'>optimize</button> range <input id='irange' type='number'> speed <input id='ispeed' type='number'>
+    </div>
+    <div>
+      left <input id='il' type='number'> right <input id='ir' type='number'> y <input id='iy' type='number'>   
     </div>
     <div>
       <canvas id='cresult'></canvas>

@@ -10,6 +10,8 @@ class App {
     this.il = document.getElementById('il');
     this.ir = document.getElementById('ir');
     this.iy = document.getElementById('iy');
+    this.irange = document.getElementById('irange');
+    this.ispeed = document.getElementById('ispeed');
     this.running = false;
     this.mousec = {x: 0, y: 0};
     this.mouser = {x: 0, y: 0};
@@ -18,17 +20,23 @@ class App {
 
     this.canvas.onmouseenter = e => this.mouseenterc();
     this.canvas.onmouseleave = e => this.mouseleavec();
-    this.cresult.onmouseenter = e => this.mouseenterr();
-    this.cresult.onmouseleave = e => this.mouseleaver();
     this.canvas.onmousedown = e => this.mousedown(e);
     this.canvas.onmousemove = e => this.mousemovec(e);
+
+    this.cresult.onmouseenter = e => this.mouseenterr();
+    this.cresult.onmouseleave = e => this.mouseleaver();
+    this.cresult.onmousedown = e => this.mousedownr(e);
+    this.cresult.onmouseup = e => this.mouseupr(e);
     this.cresult.onmousemove = e => this.mousemover(e);
+
     this.il.onchange = () => this.ilchange();
     this.ir.onchange = () => this.irchange();
     this.iy.onchange = () => this.iychange();
     document.getElementById('boptimize').onclick = () => this.optimize();
 
     document.getElementById('pasteArea').onpaste = (e) => this.onpaste(e);
+
+    document.body.onmouseup = () => this.mouseupbody();
   }
 
   onpaste(event) {
@@ -66,6 +74,8 @@ class App {
     app.ir.value = app.pright;
     app.py = 0;
     app.iy.value = app.py;
+    app.irange.value = 8;
+    app.ispeed.value = 16;
     if (!app.running) {
       setInterval(() => app.tick(), 1000 / 10); 
       app.running = true;
@@ -175,12 +185,55 @@ class App {
     const rect = e.target.getBoundingClientRect();
     this.mouser.x = e.clientX - rect.left;
     this.mouser.y = e.clientY - rect.top;
+
+    if (this.mouseStartr !== undefined) {
+      this.pright = parseInt(this.ir.value) + (this.mouseStartr.x - this.mouser.x);
+      this.py = parseInt(this.iy.value) - (this.mouseStartr.y - this.mouser.y);
+      //this.updateCmpImgs();
+    }
+
   }
 
   mouseenterc() { this.mouseInC = true; }
   mouseleavec() { this.mouseInC = false; }
   mouseenterr() { this.mouseInR = true; }
-  mouseleaver() { this.mouseInR = false; }
+  mouseleaver() { 
+    this.mouseInR = false; 
+    /*
+    if (this.mouseStartr !== undefined) {
+      this.pright = parseInt(this.ir.value);
+      this.py = parseInt(this.iy.value);
+      this.updateCmpImgs();
+      this.mouseStartr = undefined;
+    }
+    */
+  }
+  mousedownr(e) { 
+    e.preventDefault();
+    const rect = e.target.getBoundingClientRect();
+    this.mouseStartr = {x: e.clientX - rect.left, y: e.clientY - rect.top};
+  }
+  mouseupr(e) { 
+    //const rect = e.target.getBoundingClientRect();
+    //const mouseEndrx = e.clientX - rect.left;
+    //const mouseEndry = e.clientY - rect.top;
+    if (this.mouseStartr !== undefined) {
+      this.ir.value = this.pright;
+      this.iy.value = this.py;
+      this.updateCmpImgs();
+    }
+    this.mouseStartr = undefined; 
+  }
+  mouseupbody() {
+    if (this.mouseStartr !== undefined) {
+      this.ir.value = this.pright;
+      this.iy.value = this.py;
+      this.updateCmpImgs();
+    }
+    this.mouseStartr = undefined;
+
+  }
+  
 
   scoreOffset(imageData, left, right, y) {
 
@@ -194,7 +247,7 @@ class App {
     const height = this.canvas.height - Math.abs(y);
 
     let totalDiff = 0;
-    const maxStep = 32;
+    const maxStep = parseInt(this.ispeed.value);
     let checkedPixelCount = 0;
     for (let dx = 0; dx < width; dx += 1 + Math.floor(Math.random() * maxStep)) {
       const xl = baseLeftx + dx;
@@ -232,7 +285,7 @@ class App {
     ctx.drawImage(this.img, 0, 0);
 
     const imageData = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height).data;
-    const range = 16;
+    const range = parseInt(this.irange.value);
     for (let dr = -range; dr <= range; dr++) {
       const right = this.pright + dr;
       for (let dy = -range; dy <= range; dy++) {

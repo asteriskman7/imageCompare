@@ -18,3 +18,21 @@ canvas {
   border: 1px solid black;
   background: hsl(120, 100%, 25%);
 }
+
+input {
+  max-width: 4em;
+}
+
+#divInstr {
+  max-width: 30em;
+  background-color: hsl(120, 100%, 90%);
+  margin-bottom: 0.5em;
+  padding: 0.5em;
+  box-shadow: 5px 5px 6px 0px hsla(0, 0%, 0%, 0.75);
+  overflow-y: hidden;
+  max-height: 1em;
+}
+
+#divInstr:hover {
+  max-height: fit-content;
+}
