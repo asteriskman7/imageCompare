@@ -189,7 +189,6 @@ class App {
     if (this.mouseStartr !== undefined) {
       this.pright = parseInt(this.ir.value) + (this.mouseStartr.x - this.mouser.x);
       this.py = parseInt(this.iy.value) - (this.mouseStartr.y - this.mouser.y);
-      //this.updateCmpImgs();
     }
 
   }
@@ -199,14 +198,6 @@ class App {
   mouseenterr() { this.mouseInR = true; }
   mouseleaver() { 
     this.mouseInR = false; 
-    /*
-    if (this.mouseStartr !== undefined) {
-      this.pright = parseInt(this.ir.value);
-      this.py = parseInt(this.iy.value);
-      this.updateCmpImgs();
-      this.mouseStartr = undefined;
-    }
-    */
   }
   mousedownr(e) { 
     e.preventDefault();
@@ -214,9 +205,6 @@ class App {
     this.mouseStartr = {x: e.clientX - rect.left, y: e.clientY - rect.top};
   }
   mouseupr(e) { 
-    //const rect = e.target.getBoundingClientRect();
-    //const mouseEndrx = e.clientX - rect.left;
-    //const mouseEndry = e.clientY - rect.top;
     if (this.mouseStartr !== undefined) {
       this.ir.value = this.pright;
       this.iy.value = this.py;
